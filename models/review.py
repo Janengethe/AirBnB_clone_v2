@@ -22,4 +22,4 @@ class Review(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """intialize review"""
-        super().__init__(*args, **kwargs)s)
+        super().__init__(*args, **kwargs)
