@@ -111,40 +111,39 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
+    def do_create(self, line):
+        """Usage: create <class> <key 1>=<value 2> <key 2>=<value 2> ...
+        Create a new class instance with given keys/values and print its id.
+        """
+        try:
+            if not line:
+                raise SyntaxError()
+            my_list = line.split(" ")
+
+            kwargs = {}
+            for i in range(1, len(my_list)):
+                key, value = tuple(my_list[i].split("="))
+                if value[0] == '"':
+                    value = value.strip('"').replace("_", " ")
+                else:
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
+                kwargs[key] = value
+
+            if kwargs == {}:
+                obj = eval(my_list[0])()
+            else:
+                obj = eval(my_list[0])(**kwargs)
+                storage.new(obj)
+            print(obj.id)
+            obj.save()
+
+        except SyntaxError:
             print("** class name missing **")
-            return
-        elif args.split(' ')[0] not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-
-        dict_args = {}
-        pattern = '\\s+(?=(?:(?:[^"]*"){2})*[^"]*"[^"]*$)'
-        params = args.partition(' ')[2]
-        params = re.sub(pattern, '_', params)
-        params = params.split(' ')
-        for i in range(0, len(params)):
-            key, value = params[i].split('=')
-            if value[0] == '"' and value[-1] == '"':
-                value = '"' + value[1:-1].replace('"', '\""') + '"'
-            try:
-                value = eval(value)
-            except:
-                raise Exception
-            dict_args[key] = value
-
-        if dict_args == {}:
-            new_instance = HBNBCommand.classes[args.split(' ')[0]]()
-            # print('No args added')
-        else:
-            new_instance = HBNBCommand.classes[args.split(' ')[0]]()
-            for k, v in dict_args.items():
-                new_instance.__setattr__(k, v)
-
-        storage.save()
-        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -217,23 +216,34 @@ class HBNBCommand(cmd.Cmd):
         print("Destroys an individual instance of a class")
         print("[Usage]: destroy <className> <objectId>\n")
 
-    def do_all(self, args):
-        """ Shows all objects, or all objects of a class"""
-        print_list = []
-
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
+    def do_all(self, line):
+        """Usage: all or all <class> or <class>.all()
+        Display string representations of all instances of a given class.
+        If no class is specified, displays all instantiated objects."""
+        if not line:
+            o = storage.all()
+            # print("o from storage.all() is {}".format(o))
+            print([o[k].__str__() for k in o])
+            return
+        some_list = []
+        if line:
+            args = line.split(" ")
+            if args[0] not in self.__classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
-        else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
 
-        print(print_list)
+            o = storage.all(args[0])
+            """print("o is {} when args[0] which is {} is passed".
+            format(o, args[0]))"""
+            for k, v in o.items():
+                """the_id = v.id
+                key = args[0] + '.' + the_id
+                try:
+                    some_list.append(o[key])
+                except KeyError:
+                    continue"""
+                some_list.append(v)
+            print(some_list)
 
     def help_all(self):
         """ Help information for the all command """
