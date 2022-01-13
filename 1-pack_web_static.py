@@ -12,10 +12,9 @@ def do_pack():
     """generaate a .tgz archive"""
     timenow = strftime("%Y%M%d%H%M%S")
     try:
-        local("mkdir -p web_static")
+        local("mkdir -p versions")
         archname = "versions/web_static_{}.tgz".format(timenow)
         local("tar -cvzf {} web_static/".format(archname))
-
-        return (archname)
-    except ValueError:
-        return (None)
+        return archname
+    except:
+        return None
