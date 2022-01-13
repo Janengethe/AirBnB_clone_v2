@@ -8,7 +8,6 @@ from fabric.api import local
 from time import strftime
 
 
-
 def do_pack():
     """generaate a .tgz archive"""
     timenow = strftime("%Y%M%d%H%M%S")
@@ -18,5 +17,5 @@ def do_pack():
         local("tar -cvzf {} web_static/".format(archname))
 
         return (archname)
-    except:
+    except ValueError:
         return (None)
