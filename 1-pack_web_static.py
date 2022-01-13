@@ -12,8 +12,8 @@ def do_pack():
     """generaate a .tgz archive"""
     timenow = strftime("%Y%M%d%H%M%S")
     try:
-        local("mkdir -p versions")
-        archname = "web_static_{}.tgz".format(timenow)
+        local("mkdir -p web_static")
+        archname = "versions/web_static_{}.tgz".format(timenow)
         local("tar -cvzf {} web_static/".format(archname))
 
         return (archname)
