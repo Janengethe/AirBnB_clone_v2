@@ -19,7 +19,7 @@ def do_pack():
         filename = "versions/web_static_{}.tgz".format(timenow)
         local("tar -cvzf {} web_static/".format(filename))
         return filename
-    except:
+    except ValueError:
         return None
 
 
@@ -43,7 +43,7 @@ def do_deploy(archive_path):
         run("rm -rf {}".format(symlink))
         run("ln -s {} {}".format(path_no_ext, symlink))
         return True
-    except:
+    except ValueError:
         return False
 
 
@@ -53,12 +53,14 @@ def deploy():
         return False
     success = do_deploy(archive_path)
     return success
+
+
 def do_clean(number=0):
     if number == 0:
         number = 1
     with cd.local('./versions'):
-            local("ls -lt | tail -n +{} | rev | cut -f1 -d" " | rev | \
+        local("ls -lt | tail -n +{} | rev | cut -f1 -d" " | rev | \
             xargs -d '\n' rm".format(1 + number))
     with cd('/data/web_static/releases/'):
-            run("ls -lt | tail -n +{} | rev | cut -f1 -d" " | rev | \
+        run("ls -lt | tail -n +{} | rev | cut -f1 -d" " | rev | \
             xargs -d '\n' rm".format(1 + number))
