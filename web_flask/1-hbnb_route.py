@@ -4,6 +4,7 @@ Module 1-hello_route.Starts a Flask Web App
 Test on tab 1:python3 -m web_flask.1-hello_route
 On another tab:curl 0.0.0.0:5000/hbnb ; echo "" | cat -e
 """
+
 from flask import Flask
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -23,8 +24,8 @@ def hbnb():
     """
     displays HBNB when /hbnb is used in url
     """
-    return ("HBNB!")
+    return ("HBNB")
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
